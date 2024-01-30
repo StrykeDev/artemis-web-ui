@@ -11,7 +11,9 @@ export default function ColorPickerComponent(props: ColorPickerProps) {
   const { color = Color.rgb(0, 0, 0), onChange } = props;
 
   const handleColorChange = (newColor: Color) => {
-    onChange(newColor);
+    if (newColor !== color) {
+      onChange(newColor);
+    }
   };
   return (
     <div className="color-picker panel flex justify-center flex-col flex-grow">
@@ -24,7 +26,7 @@ export default function ColorPickerComponent(props: ColorPickerProps) {
           background: color.hexa(),
           color: color.value() > 50 ? 'black' : 'white',
         }}
-        value={color.rgb().toString().substring(3)}
+        value={color.rgb().string().toUpperCase()}
         readOnly
       />
       <input
@@ -105,6 +107,7 @@ export default function ColorPickerComponent(props: ColorPickerProps) {
         onChange={(e) => {
           handleColorChange(color.hexa(e.target.value));
         }}
+        disabled
       />
     </div>
   );
