@@ -1,113 +1,214 @@
-import Image from "next/image";
+'use client';
+
+import { useEffect, useState } from 'react';
+
+export function hsvaToHex({
+  h,
+  s,
+  v,
+  a,
+}: {
+  h: number;
+  s: number;
+  v: number;
+  a: number;
+}) {
+  const c = (v / 100) * (s / 100);
+  const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+  const m = v / 100 - c;
+
+  let r, g, b;
+
+  if (h >= 0 && h < 60) {
+    [r, g, b] = [c, x, 0];
+  } else if (h >= 60 && h < 120) {
+    [r, g, b] = [x, c, 0];
+  } else if (h >= 120 && h < 180) {
+    [r, g, b] = [0, c, x];
+  } else if (h >= 180 && h < 240) {
+    [r, g, b] = [0, x, c];
+  } else if (h >= 240 && h < 300) {
+    [r, g, b] = [x, 0, c];
+  } else {
+    [r, g, b] = [c, 0, x];
+  }
+
+  // Convert RGB to hexadecimal
+  const rgbToHex = (value: number) => {
+    const hex = Math.round(value * 255)
+      .toString(16)
+      .padStart(2, '0');
+    return hex.length === 1 ? '0' + hex : hex;
+  };
+
+  const hex = `#${rgbToHex(r + m)}${rgbToHex(g + m)}${rgbToHex(b + m)}`;
+
+  // Add alpha if not fully opaque
+  const alphaHex = Math.round(a * 255)
+    .toString(16)
+    .padStart(2, '0');
+  return `${hex}${alphaHex}`;
+}
 
 export default function Home() {
+  const [ColorHSVA, setColorHSVA] = useState({
+    h: 360.0,
+    s: 100.0,
+    v: 100.0,
+    a: 1.0,
+  });
+  const [ColorHex, setColorHex] = useState('');
+
+  useEffect(() => {
+    const { h, s, v, a } = ColorHSVA;
+
+    setColorHex(hsvaToHex(ColorHSVA));
+  }, [ColorHSVA]);
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50 text-balance`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    <>
+      <header className="flex justify-between panel-border border-b-4">
+        <h1>Artemis Web UI</h1>
+        <select name="brush" id="brush" disabled></select>
+      </header>
+      <main className="flex flex-row">
+        <aside className="panel-border border-r-4 min-w-40">
+          <ul>
+            <li>Static Color</li>
+          </ul>
+        </aside>
+        <section className="color-picker panel flex justify-center flex-col flex-grow">
+          <input
+            type="text"
+            name="hex"
+            id="hex"
+            className="text-center"
+            style={{
+              background:
+                'hsla(' +
+                ColorHSVA.h +
+                ', ' +
+                ColorHSVA.s +
+                '%, ' +
+                ColorHSVA.v / (ColorHSVA.s / 100 + 1) +
+                '%, ' +
+                ColorHSVA.a +
+                ')',
+              color:
+                ColorHSVA.v / (ColorHSVA.s / 100 + 1) > 60 ? 'black' : 'white',
+            }}
+            value={ColorHex}
+            disabled
+          ></input>
+          <input
+            type="range"
+            name="hue"
+            id="hue"
+            min={0}
+            max={360}
+            value={ColorHSVA.h}
+            style={{
+              backgroundImage:
+                'linear-gradient(to right in hsl longer hue, red, red)',
+            }}
+            onChange={(e) => {
+              setColorHSVA({
+                h: parseFloat(e.target.value),
+                s: ColorHSVA.s,
+                v: ColorHSVA.v,
+                a: ColorHSVA.a,
+              });
+            }}
+          />
+          <input
+            type="range"
+            name="sat"
+            id="sat"
+            min={0}
+            max={100}
+            value={ColorHSVA.s}
+            style={{
+              background:
+                'linear-gradient(to right, hsl(' +
+                ColorHSVA.h +
+                ', 0%, 100%), hsl(' +
+                ColorHSVA.h +
+                ', 100%, 50%))',
+            }}
+            onChange={(e) => {
+              setColorHSVA({
+                h: ColorHSVA.h,
+                s: parseFloat(e.target.value),
+                v: ColorHSVA.v,
+                a: ColorHSVA.a,
+              });
+            }}
+          />
+          <input
+            type="range"
+            name="val"
+            id="val"
+            min={0}
+            max={100}
+            value={ColorHSVA.v}
+            style={{
+              background:
+                'linear-gradient(to right, hsl(' +
+                ColorHSVA.h +
+                ', ' +
+                ColorHSVA.s +
+                '%, 0%), hsl(' +
+                ColorHSVA.h +
+                ', ' +
+                ColorHSVA.s +
+                '%, ' +
+                100 / (ColorHSVA.s / 100 + 1) +
+                '%))',
+            }}
+            onChange={(e) => {
+              setColorHSVA({
+                h: ColorHSVA.h,
+                s: ColorHSVA.s,
+                v: parseFloat(e.target.value),
+                a: ColorHSVA.a,
+              });
+            }}
+          />
+          <input
+            type="range"
+            name="alpha"
+            id="alpha"
+            min={0}
+            max={1}
+            step={0.01}
+            value={ColorHSVA.a}
+            style={{
+              backgroundImage:
+                'linear-gradient(to right, hsla(' +
+                ColorHSVA.h +
+                ', ' +
+                ColorHSVA.s +
+                '%, ' +
+                ColorHSVA.v / (ColorHSVA.s / 100 + 1) +
+                '%, 0), hsla(' +
+                ColorHSVA.h +
+                ', ' +
+                ColorHSVA.s +
+                '%, ' +
+                ColorHSVA.v / (ColorHSVA.s / 100 + 1) +
+                '%, 1))',
+            }}
+            onChange={(e) => {
+              setColorHSVA({
+                h: ColorHSVA.h,
+                s: ColorHSVA.s,
+                v: ColorHSVA.v,
+                a: parseFloat(e.target.value),
+              });
+            }}
+          />
+        </section>
+      </main>
+    </>
   );
 }

@@ -3,31 +3,71 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+  --color-base: #000000;
+  --color-background: #161616;
+  --color-panel: #202020;
+  --color-border: #292929;
+  --color-text: #ffffff;
+  --color-text-muted: #606060;
+  --color-input: #343434;
+  --color-input-hover: #3a3a3a;
+  --color-input-active: #212121;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  margin: 0;
+  font-size: 1rem;
+  color: var(--color-text);
+  background-color: var(--color-background);
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+footer {
+  color: var(--color-text-muted);
+}
+
+.panel {
+  background-color: var(--color-panel);
+  border-radius: 1rem;
+  padding: .5rem;
+}
+
+.panel-border {
+  margin: .5rem;
+  padding: 1rem;
+  border-color: var(--color-border);
+}
+
+input,
+select {
+  min-width: 10rem;
+  margin: .25rem;
+  padding: .25rem;
+  background-color: var(--color-input);
+  border-bottom: .125rem solid var(--color-text-muted);
+  border-radius: .4rem;
+  outline: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+input[type=range] {
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  border-radius: 9999px;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 1rem;
+  width: 1rem;
+  border: 2px solid var(--color-border);
+  border-radius: 50%;
+  background: rgb(0, 0, 0);
 }
