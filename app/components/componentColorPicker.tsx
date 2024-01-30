@@ -11,12 +11,10 @@ export default function ColorPickerComponent(props: ColorPickerProps) {
   const { color = Color.rgb(0, 0, 0), onChange } = props;
 
   const handleColorChange = (newColor: Color) => {
-    if (newColor !== color) {
-      onChange(newColor);
-    }
+    onChange(newColor);
   };
   return (
-    <div className="color-picker panel flex justify-center flex-col flex-grow">
+    <div className="color-picker flex justify-center flex-col flex-grow">
       <input
         type="text"
         name="hex"

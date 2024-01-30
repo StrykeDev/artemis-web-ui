@@ -24,7 +24,6 @@ export async function POST(request: Request) {
 
   currentColor = color;
   currentBrush = brushId;
-  console.log('Request sent ' + color);
 
   try {
     const res1 = await axios.get(baseUrl + brushId);
