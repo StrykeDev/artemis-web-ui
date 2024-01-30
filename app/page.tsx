@@ -2,37 +2,33 @@
 
 import { useEffect, useState } from 'react';
 
+// Libs
 import axios from 'axios';
 import Color from 'color';
 
+// Components
 import ColorPicker from './components/componentColorPicker';
 
+// Interfaces
+import { ProfileInterface } from './api/route';
+
 export default function Home() {
-  const [brushes, setBrushes] = useState<{ id: string; name: string }[]>([]);
+  const [profiles, setProfiles] = useState<ProfileInterface[]>([]);
   const [selectedBrush, setSelectedBrush] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState<Color>(
-    Color.hsv(253, 100, 100, 1)
+    Color.hsv(359.9999, 100, 100, 1)
   );
 
   useEffect(() => {
+    // Load profiles
     axios.get('/api').then((res) => {
-      const newBrushes: { id: string; name: string }[] = [];
-      res.data.forEach(
-        (brush: {
-          LayerId: string;
-          LayerName: string;
-          ProfileName: string;
-        }) => {
-          newBrushes.push({
-            id: brush.LayerId,
-            name: brush.ProfileName + ' - ' + brush.LayerName,
-          });
-        }
-      );
+      console.log(res.data);
 
-      if (newBrushes.length > 0) {
-        setBrushes(newBrushes);
-        setSelectedBrush(newBrushes[0].id);
+      setProfiles(res.data);
+
+      // Load first brush
+      if (res.data.length > 0) {
+        setSelectedBrush(res.data[0].brushId);
       }
     });
   }, []);
@@ -55,12 +51,12 @@ export default function Home() {
             className=" flex-grow-1"
             value={selectedBrush}
             onChange={(e) => setSelectedBrush(e.target.value)}
-            disabled={brushes.length < 1}
+            disabled={profiles.length < 1}
           >
-            {brushes.map((brush) => {
+            {profiles.map((profile) => {
               return (
-                <option value={brush.id} key={brush.id}>
-                  {brush.name}
+                <option value={profile.brushId} key={profile.brushId}>
+                  {profile.profileName + '\\' + profile.layerName}
                 </option>
               );
             })}

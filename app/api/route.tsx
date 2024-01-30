@@ -7,10 +7,40 @@ const baseUrl = `http://${ip}:${port}/remote-control-brushes/`;
 let currentBrush = '';
 let currentColor = '';
 
+export interface ProfileInterface {
+  profileId: string;
+  profileName: string;
+  layerName: string;
+  brushId: string;
+}
+
+export interface BrushInterface {
+  brushId: string;
+  color: string;
+  leds: string[];
+}
+
 export async function GET() {
   try {
     const res = await axios.get(baseUrl);
-    return Response.json(res.data);
+    const data: ProfileInterface[] = [];
+    res.data.forEach(
+      (profile: {
+        ProfileId: string;
+        ProfileName: string;
+        LayerId: string;
+        LayerName: string;
+      }) => {
+        data.push({
+          profileId: profile.ProfileId,
+          profileName: profile.ProfileName,
+          brushId: profile.LayerId,
+          layerName: profile.LayerName,
+        });
+      }
+    );
+
+    return Response.json(data);
   } catch (error) {
     console.error('Error:', error);
   }
