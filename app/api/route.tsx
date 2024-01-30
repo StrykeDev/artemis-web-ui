@@ -4,6 +4,9 @@ const ip = 'localhost';
 const port = 9696;
 const baseUrl = `http://${ip}:${port}/remote-control-brushes/`;
 
+let currentBrush = '';
+let currentColor = '';
+
 export async function GET() {
   try {
     const res = await axios.get(baseUrl);
@@ -15,6 +18,13 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const { brushId, color } = await request.json();
+  if (color === currentColor && brushId === brushId) {
+    return Response.json(['']);
+  }
+
+  currentColor = color;
+  currentBrush = brushId;
+  console.log('Request sent ' + color);
 
   try {
     const res1 = await axios.get(baseUrl + brushId);
