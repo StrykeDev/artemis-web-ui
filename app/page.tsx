@@ -1,30 +1,60 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
+import axios from 'axios';
 import Color from 'color';
 
 import ColorPicker from './components/componentColorPicker';
 
 export default function Home() {
   const [selectedColor, setSelectedColor] = useState<Color>(
-    Color.hsv(360, 0, 100, 1)
+    Color.hsv(253, 100, 100, 1)
   );
+  const [brushes, setBrushes] = useState<{ id: string; name: string }[]>([]);
+  const [selectedBrush, setSelectedBrush] = useState<string>('');
 
-  const handleColorChange = (newColor: Color) => {
-    if (selectedColor != newColor) {
-      setSelectedColor(newColor);
-    }
-  };
+  useEffect(() => {
+    axios.get('/api').then((res) => {
+      const newBrushes: { id: string; name: string }[] = [];
+      res.data.forEach((brush: { LayerId: string; LayerName: string }) => {
+        newBrushes.push({ id: brush.LayerId, name: brush.LayerName });
+      });
+
+      if (newBrushes.length > 0) {
+        setBrushes(newBrushes);
+        setSelectedBrush(newBrushes[0].id);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!selectedBrush) return;
+    axios.post('/api', { brushId: selectedBrush, color: selectedColor.hex() });
+  }, [selectedColor]);
 
   return (
     <>
       <header className="flex justify-between panel-border border-b-4">
         <h1>Artemis Web UI</h1>
-        <select name="brush" id="brush" disabled></select>
+        <select
+          name="brush"
+          id="brush"
+          value={selectedBrush}
+          onChange={(e) => setSelectedBrush(e.target.value)}
+          disabled={brushes.length < 1}
+        >
+          {brushes.map((brush) => {
+            return (
+              <option value={brush.id} key={brush.id}>
+                {brush.name}
+              </option>
+            );
+          })}
+        </select>
       </header>
       <main className="p-4">
-        <ColorPicker color={selectedColor} onChange={handleColorChange} />
+        <ColorPicker color={selectedColor} onChange={setSelectedColor} />
       </main>
     </>
   );
