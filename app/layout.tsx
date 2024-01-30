@@ -19,7 +19,8 @@ export default function RootLayout({
         {children}
         <footer className="flex justify-center panel-border border-t-4">
           <span>
-            Developed by <a href="https://github.com/StrykeDev">StrykeDev</a>.
+            Developed by <a href="https://github.com/StrykeDev">StrykeDev</a>{' '}
+            for <a href="https://artemis-rgb.com/">Artemis RGB</a>.
           </span>
         </footer>
       </body>
