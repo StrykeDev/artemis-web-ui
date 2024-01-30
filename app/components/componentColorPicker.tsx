@@ -5,14 +5,16 @@ import Color from 'color';
 export interface ColorPickerProps {
   color: Color;
   onChange: (color: Color) => void;
+  disabled?: boolean;
 }
 
 export default function ColorPickerComponent(props: ColorPickerProps) {
-  const { color = Color.rgb(0, 0, 0), onChange } = props;
+  const { color = Color.rgb(0, 0, 0), onChange, disabled = false } = props;
 
   const handleColorChange = (newColor: Color) => {
     onChange(newColor);
   };
+
   return (
     <div className="color-picker flex justify-center flex-col flex-grow">
       <input
@@ -41,6 +43,7 @@ export default function ColorPickerComponent(props: ColorPickerProps) {
         onChange={(e) => {
           handleColorChange(color.hue(parseFloat(e.target.value)));
         }}
+        disabled={disabled}
       />
       <input
         type="range"
@@ -58,6 +61,7 @@ export default function ColorPickerComponent(props: ColorPickerProps) {
         onChange={(e) => {
           handleColorChange(color.saturationv(parseFloat(e.target.value)));
         }}
+        disabled={disabled}
       />
       <input
         type="range"
@@ -79,6 +83,7 @@ export default function ColorPickerComponent(props: ColorPickerProps) {
         onChange={(e) => {
           handleColorChange(color.value(parseFloat(e.target.value)));
         }}
+        disabled={disabled}
       />
       <input
         type="range"
@@ -95,6 +100,7 @@ export default function ColorPickerComponent(props: ColorPickerProps) {
         onChange={(e) => {
           handleColorChange(color.alpha(parseFloat(e.target.value)));
         }}
+        disabled={disabled}
       />
       <input
         type="text"
@@ -105,7 +111,7 @@ export default function ColorPickerComponent(props: ColorPickerProps) {
         onChange={(e) => {
           handleColorChange(color.hexa(e.target.value));
         }}
-        disabled
+        disabled={disabled}
       />
     </div>
   );
