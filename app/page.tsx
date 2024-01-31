@@ -10,7 +10,7 @@ import ColorPicker from './components/componentColorPicker';
 
 // Interfaces
 import { LedInterface, ProfileInterface } from './api/route';
-import { convertToRRGGBBAA } from './Utils/Conversions';
+import { ledIdToName } from './Utils/Conversions';
 
 const defaultColor = Color.hsv(359.9999, 100, 100, 1);
 
@@ -18,7 +18,7 @@ export default function Home() {
   const [profiles, setProfiles] = useState<ProfileInterface[]>([]);
   const [selectedLayer, setSelectedLayer] = useState<{
     LayerId: string;
-    LedColors: LedInterface;
+    LedColors: LedInterface[];
   }>();
   const [selectedColor, setSelectedColor] = useState<Color>(defaultColor);
 
@@ -87,6 +87,25 @@ export default function Home() {
             onChange={handleColorChange}
             disabled={selectedLayer === undefined}
           />
+        </section>
+        <section className="m-4 panel flex flex-row flex-wrap">
+          {selectedLayer?.LedColors.map((led) => {
+            return (
+              <div
+                key={led.LedId}
+                className="m-1 p-1 h-10 w-12 flex-grow flex items-center justify-center text-center rounded text-xs whitespace-pre-line"
+                style={{
+                  background: selectedColor.hexa(),
+                  color:
+                    selectedColor.value() > 50 && selectedColor.alpha() > 0.5
+                      ? 'black'
+                      : 'white',
+                }}
+              >
+                {ledIdToName(led.LedId)}
+              </div>
+            );
+          })}
         </section>
       </main>
     </>

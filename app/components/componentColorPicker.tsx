@@ -24,7 +24,7 @@ export default function ColorPickerComponent(props: ColorPickerProps) {
         className="text-center h-24"
         style={{
           background: color.hexa(),
-          color: color.value() > 50 ? 'black' : 'white',
+          color: color.value() > 50 && color.alpha() > 0.5 ? 'black' : 'white',
         }}
         value={color.rgb().string().toUpperCase()}
         readOnly

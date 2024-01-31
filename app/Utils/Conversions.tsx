@@ -31,3 +31,23 @@ export function convertToAARRGGBB(rrggbbaa: string) {
   var aarrggbb = '#' + aa + rr + gg + bb;
   return aarrggbb;
 }
+
+export function ledIdToName(LedId: string) {
+  const regex = /^([A-Za-z]+)_?([A-Z]([a-z]|\d){1,4}|[A-Z]?\d?)/;
+  const match = LedId.match(regex);
+
+  const alias: { [key: string]: string } = {
+    Mainboard: 'MB',
+    GraphicsCard: 'GPU',
+    Mouse: 'M',
+    Mousepad: 'MP',
+    Keyboard: 'KB',
+  };
+
+  if (match && alias[match[1]]) {
+    return alias[match[1]] + '\n' + match[2];
+  } else {
+    console.warn('Failed to match LedId ' + LedId);
+    return '?';
+  }
+}
