@@ -16,6 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <header className="flex justify-between align-middle panel-border border-b-4">
+          <h1>Artemis Web UI</h1>
+        </header>
         {children}
         <footer className="flex justify-center panel-border border-t-4">
           <span>
