@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-
 import axios from 'axios';
+
+import { convertToAARRGGBB, convertToRRGGBBAA } from '../Utils/Conversions';
 
 const ip = 'localhost';
 const port = 9696;
@@ -47,7 +48,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { LayerId, LedColors, Color } = await request.json();
+    const { LayerId, Color, LedColors } = await request.json();
 
     if (Color === lastColor && LayerId === lastLayerId)
       return NextResponse.json({ status: 200 });
@@ -55,9 +56,10 @@ export async function POST(request: NextRequest) {
     lastColor = Color;
     lastLayerId = LayerId;
 
+    const convertedHexa = convertToAARRGGBB(Color);
     const payload: LedInterface[] = [];
     LedColors.forEach((led: LedInterface) => {
-      payload.push({ LedId: led.LedId, Color: Color });
+      payload.push({ LedId: led.LedId, Color: convertedHexa });
     });
 
     console.info(
@@ -71,9 +73,18 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function getLayer(LayerId: string): Promise<LedInterface[]> {
+async function getLayer(
+  LayerId: string
+): Promise<{ LayerId: string; Color: string; LedColors: LedInterface[] }> {
   const res = await axios.get(baseUrl + LayerId);
-  return res.data.LedColors;
+  const color = res.data.LedColors
+    ? convertToRRGGBBAA(res.data.LedColors[0].Color)
+    : '#00000000';
+  return {
+    LayerId: res.data.LayerId,
+    Color: color,
+    LedColors: res.data.LedColors,
+  };
 }
 
 async function getProfiles(): Promise<ProfileInterface[]> {

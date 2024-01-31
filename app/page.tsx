@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-
 // Libs
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Color from 'color';
 
@@ -11,6 +10,7 @@ import ColorPicker from './components/componentColorPicker';
 
 // Interfaces
 import { LedInterface, ProfileInterface } from './api/route';
+import { convertToRRGGBBAA } from './Utils/Conversions';
 
 const defaultColor = Color.hsv(359.9999, 100, 100, 1);
 
@@ -37,12 +37,10 @@ export default function Home() {
       axios.get('/api', { params: { LayerId: newLayerId } }).then((res) => {
         setSelectedLayer({
           LayerId: newLayerId,
-          LedColors: res.data,
+          LedColors: res.data.LedColors,
         });
 
-        if (res.data) {
-          setSelectedColor(selectedColor.hexa(res.data[0].Color));
-        }
+        setSelectedColor(selectedColor.hexa(res.data.Color));
       });
     }
   };
@@ -53,8 +51,8 @@ export default function Home() {
     if (selectedLayer && selectedLayer.LedColors) {
       axios.post('/api', {
         LayerId: selectedLayer.LayerId,
+        Color: newColor.hexa(),
         LedColors: selectedLayer.LedColors,
-        Color: newColor.hex(),
       });
     }
   };
@@ -82,6 +80,8 @@ export default function Home() {
               );
             })}
           </select>
+        </section>
+        <section className="m-4 panel flex flex-col">
           <ColorPicker
             color={selectedColor}
             onChange={handleColorChange}
