@@ -1,6 +1,9 @@
 {
   "name": "artemis-web-ui",
   "version": "0.1.0",
+  "description": "Web application to use Artemis remote control brushes",
+  "author": "Barak Attias",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "dev": "next dev",
