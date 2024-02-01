@@ -38,10 +38,11 @@ footer {
 }
 
 input,
-select {
+select,
+.button {
   min-width: 10rem;
   margin: .25rem;
-  padding: .25rem;
+  padding: .25rem .5rem;
   background-color: var(--color-input);
   border-bottom: .125rem solid var(--color-text-muted);
   border-radius: .4rem;
@@ -70,4 +71,30 @@ input[type=range]::-webkit-slider-thumb {
   border: 2px solid var(--color-border);
   border-radius: 50%;
   background: rgb(0, 0, 0);
+}
+
+.button {
+  border: none;
+  text-align: center;
+  min-width: unset;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: .25rem;
+  font-weight: 600;
+}
+
+p {
+  margin: .25rem;
+}
+
+hr {
+  margin-block: 1rem;
+  border: 2px solid var(--color-border);
+  border-radius: .4rem;
 }

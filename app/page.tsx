@@ -1,29 +1,28 @@
 'use client';
 
-// Libs
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Color from 'color';
 
-// Components
 import ColorPicker from './components/componentColorPicker';
 
-// Interfaces
 import { LedInterface, ProfileInterface } from './api/route';
-import { ledIdToName } from './Utils/Conversions';
+import { convertToLedName } from './utils/conversions';
 
-const defaultColor = Color.hsv(359.9999, 100, 100, 1);
-
+/**
+ * Home page
+ */
 export default function Home() {
   const [profiles, setProfiles] = useState<ProfileInterface[]>([]);
   const [selectedLayer, setSelectedLayer] = useState<{
     LayerId: string;
     LedColors: LedInterface[];
   }>();
-  const [selectedColor, setSelectedColor] = useState<Color>(defaultColor);
+  const [selectedColor, setSelectedColor] = useState<Color>(
+    Color.hsv(359.99999, 100, 100, 1)
+  );
 
   useEffect(() => {
-    // Load profiles
     axios.get('/api').then((res) => {
       setProfiles(res.data);
     });
@@ -70,7 +69,7 @@ export default function Home() {
             disabled={profiles.length < 1}
           >
             <option value="" disabled hidden>
-              Select a layer
+              Select a layer brush
             </option>
             {profiles.map((profile) => {
               return (
@@ -83,7 +82,7 @@ export default function Home() {
         </section>
         <section className="m-4 panel flex flex-col">
           <ColorPicker
-            color={selectedColor}
+            value={selectedColor}
             onChange={handleColorChange}
             disabled={selectedLayer === undefined}
           />
@@ -102,10 +101,51 @@ export default function Home() {
                       : 'white',
                 }}
               >
-                {ledIdToName(led.LedId)}
+                {convertToLedName(led.LedId)}
               </div>
             );
           })}
+        </section>
+        <section
+          className="m-4 panel flex flex-col flex-wrap"
+          style={{ color: 'var(--color-text-muted)' }}
+        >
+          <h5>How to use:</h5>
+          <p>
+            You can access the web UI from any browser on your{' '}
+            <strong>local network</strong> via the local IP of the PC which is
+            running Artemis.
+          </p>
+          <p>
+            You can find your local IP by opening a terminal (CMD) then typing{' '}
+            <code>ipconfig</code>.
+            <br />
+            The local IP would be listed next to IPv4 Address.
+          </p>
+          <p>
+            Go to your browser (on any device) and type in the URL the IP with
+            port 3000.
+            <br />
+            Like this: <code>http://192.168.1.69:3000</code>
+          </p>
+          <p>
+            If you did everything correctly you should be able to see this UI!
+            <br /> Which makes this guide kinda pointless since you would not be
+            able to read this...
+          </p>
+          <hr />
+          <p>
+            To use this app you need to have at least 1 active{' '}
+            <strong>remote control layer</strong>.
+            <br />
+            Or just download the pre-made web UI profile.
+          </p>
+          <a
+            href="https://workshop.artemis-rgb.com/entries/155/artemis-web-ui"
+            className="button"
+          >
+            Download the Web UI Profile
+          </a>
         </section>
       </main>
     </>

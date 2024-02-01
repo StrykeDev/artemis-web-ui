@@ -3,13 +3,25 @@
 import Color from 'color';
 
 export interface ColorPickerProps {
-  color: Color;
-  onChange: (color: Color) => void;
+  value: Color;
   disabled?: boolean;
+  onChange: (color: Color) => void;
 }
 
+/**
+ * Color picker component.
+ *
+ * @param value Color value
+ * @param disabled Should this component be disabled?
+ *
+ * @callback onChange Called when the color value changed
+ */
 export default function ColorPickerComponent(props: ColorPickerProps) {
-  const { color = Color.rgb(0, 0, 0), onChange, disabled = false } = props;
+  const {
+    value: color = Color.rgb(0, 0, 0),
+    disabled = false,
+    onChange,
+  } = props;
 
   const handleColorChange = (newColor: Color) => {
     onChange(newColor);
@@ -34,7 +46,7 @@ export default function ColorPickerComponent(props: ColorPickerProps) {
         name="hue"
         id="hue"
         min={0}
-        max={359.9999}
+        max={359.99999}
         value={color.hue()}
         style={{
           backgroundImage:
@@ -111,7 +123,7 @@ export default function ColorPickerComponent(props: ColorPickerProps) {
         onChange={(e) => {
           handleColorChange(color.hexa(e.target.value));
         }}
-        disabled={disabled}
+        disabled={true}
       />
     </div>
   );

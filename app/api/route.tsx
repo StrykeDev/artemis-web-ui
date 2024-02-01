@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
 
-import { convertToAARRGGBB, convertToRRGGBBAA } from '../Utils/Conversions';
+import { convertToArtemisHexa, convertToHexa } from '../utils/conversions';
 
+// TODO: Move to environment variables.
 const ip = 'localhost';
 const port = 9696;
 const baseUrl = `http://${ip}:${port}/remote-control-brushes/`;
@@ -24,25 +25,42 @@ export interface LedInterface {
 
 export async function GET(request: NextRequest) {
   try {
+    // Attempt to get layer id from the request params
     const LayerId = request.nextUrl.searchParams.get('LayerId');
 
     if (LayerId) {
-      // Fetch layer data
+      // If there is a layer id attempt to fetch the layer data
       console.info('Fetching layer data: ' + LayerId);
-      const data = await getLayer(LayerId);
+
+      const res = await axios.get(baseUrl + LayerId);
+      const color = res.data.LedColors
+        ? convertToHexa(res.data.LedColors[0].Color)
+        : '#00000000';
+
+      const data = {
+        LayerId: res.data.LayerId,
+        Color: color,
+        LedColors: res.data.LedColors,
+      };
+
       console.info('Data received:');
       console.info(data);
+
       return NextResponse.json(data);
     } else {
       // Fetch profiles data
       console.info('Fetching profiles data');
-      const data = await getProfiles();
+
+      const res = await axios.get(baseUrl);
+
       console.info('Data received:');
-      console.info(data);
-      return NextResponse.json(data);
+      console.info(res.data);
+
+      return NextResponse.json(res.data);
     }
   } catch (error) {
     console.error('Error:', error);
+    NextResponse.json({ status: 500 });
   }
 }
 
@@ -50,44 +68,31 @@ export async function POST(request: NextRequest) {
   try {
     const { LayerId, Color, LedColors } = await request.json();
 
-    if (Color === lastColor && LayerId === lastLayerId)
+    // Skip if the desired led color is already set
+    if (Color === lastColor && LayerId === lastLayerId) {
       return NextResponse.json({ status: 200 });
+    } else {
+      lastColor = Color;
+      lastLayerId = LayerId;
+    }
 
-    lastColor = Color;
-    lastLayerId = LayerId;
-
-    const convertedHexa = convertToAARRGGBB(Color);
+    // Creating and POST the payload
+    const artemisHexa = convertToArtemisHexa(Color);
     const payload: LedInterface[] = [];
+
     LedColors.forEach((led: LedInterface) => {
-      payload.push({ LedId: led.LedId, Color: convertedHexa });
+      payload.push({ LedId: led.LedId, Color: artemisHexa });
     });
 
     console.info(
       `Updating layer ${LayerId} color to ${Color} for ${LedColors.length} LEDs`
     );
+
     const res = await axios.post(baseUrl + LayerId + '/update-colors', payload);
 
     return Response.json(res.data);
   } catch (error) {
     console.error('Error:', error);
+    NextResponse.json({ status: 500 });
   }
-}
-
-async function getLayer(
-  LayerId: string
-): Promise<{ LayerId: string; Color: string; LedColors: LedInterface[] }> {
-  const res = await axios.get(baseUrl + LayerId);
-  const color = res.data.LedColors
-    ? convertToRRGGBBAA(res.data.LedColors[0].Color)
-    : '#00000000';
-  return {
-    LayerId: res.data.LayerId,
-    Color: color,
-    LedColors: res.data.LedColors,
-  };
-}
-
-async function getProfiles(): Promise<ProfileInterface[]> {
-  const res = await axios.get(baseUrl);
-  return res.data;
 }
